@@ -101,7 +101,7 @@ private:
 public:
     TwoPhaseCommitter(Txn * txn);
 
-    void execute();
+    bool execute();
 
 private:
     enum Action

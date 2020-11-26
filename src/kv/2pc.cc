@@ -59,7 +59,7 @@ TwoPhaseCommitter::TwoPhaseCommitter(Txn * txn) : log(&Logger::get("pingcap.tikv
     }
 }
 
-void TwoPhaseCommitter::execute()
+bool TwoPhaseCommitter::execute()
 {
     try
     {
@@ -80,7 +80,9 @@ void TwoPhaseCommitter::execute()
             // TODO: Rollback keys.
         }
         log->warning("write commit exception: " + e.displayText());
+	return false;
     }
+    return true;
 }
 
 void TwoPhaseCommitter::prewriteSingleBatch(Backoffer & bo, const BatchKeys & batch)

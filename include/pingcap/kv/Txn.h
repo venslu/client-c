@@ -32,15 +32,22 @@ struct Txn
         start_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
     }
 
-    void commit()
+    bool commit()
     {
         TwoPhaseCommitter committer(this);
-        committer.execute();
+        return committer.execute();
     }
 
-    void set(const std::string & key, const std::string & value) { buffer.emplace(key, value); }
+    bool set(const std::string & key, const std::string & value) {
+	buffer.emplace(key, value);
+	return buffer.find(key) != buffer.end();
+    }
 
-    void del(const std::string & key) { buffer.emplace(key, ""); }
+    bool del(const std::string & key) {
+	buffer.emplace(key, "");
+	auto it = buffer.find(key);
+	return (it->second).empty();
+    }
 
     std::pair<std::string, bool> get(const std::string & key)
     {
